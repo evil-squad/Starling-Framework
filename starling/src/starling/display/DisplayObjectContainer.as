@@ -73,6 +73,7 @@ package starling.display
         // helper objects
         private static var sHelperMatrix:Matrix = new Matrix();
         private static var sHelperPoint:Point = new Point();
+		private static var sHelperMaskPoint:Point = new Point();
         private static var sBroadcastListeners:Vector.<DisplayObject> = new <DisplayObject>[];
         private static var sSortBuffer:Vector.<DisplayObject> = new <DisplayObject>[];
         private static var sCacheToken:BatchToken = new BatchToken();
@@ -322,13 +323,18 @@ package starling.display
         /** @inheritDoc */
         public override function hitTest(localPoint:Point):DisplayObject
         {
-            if (!visible || !touchable || !hitTestMask(localPoint)) return null;
+            if (!visible || !touchable) return null;
 
             var target:DisplayObject = null;
             var localX:Number = localPoint.x;
             var localY:Number = localPoint.y;
             var numChildren:int = _children.length;
-
+			if (mask)
+			{
+				sHelperMaskPoint.copyFrom(localPoint);
+				if (hitTestMask(localPoint))localPoint.copyFrom(sHelperMaskPoint);
+				else return null; // if we've got a mask and the hit occurs outside, fail
+			}
             for (var i:int = numChildren - 1; i >= 0; --i) // front to back!
             {
                 var child:DisplayObject = _children[i];

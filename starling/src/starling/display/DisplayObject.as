@@ -156,6 +156,7 @@ package starling.display
 
         private static var sAncestors:Vector.<DisplayObject> = new <DisplayObject>[];
         private static var sHelperPoint:Point = new Point();
+		private static var sHelperMaskPoint:Point = new Point();
         private static var sHelperPoint3D:Vector3D = new Vector3D();
         private static var sHelperPointAlt3D:Vector3D = new Vector3D();
         private static var sHelperRect:Rectangle = new Rectangle();
@@ -290,8 +291,13 @@ package starling.display
             if (!_visible || !_touchable) return null;
 
             // if we've got a mask and the hit occurs outside, fail
-            if (_mask && !hitTestMask(localPoint)) return null;
-            
+            //if (_mask && !hitTestMask(localPoint)) return null;
+			if (_mask)
+			{
+				sHelperMaskPoint.copyFrom(localPoint);
+				if (hitTestMask(localPoint))localPoint.copyFrom(sHelperMaskPoint);
+				else return null; // if we've got a mask and the hit occurs outside, fail
+			}
             // otherwise, check bounding box
             if (getBounds(this, sHelperRect).containsPoint(localPoint)) return this;
             else return null;
