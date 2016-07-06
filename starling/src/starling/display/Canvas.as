@@ -52,7 +52,7 @@ package starling.display
             for (var i:int = 0, len:int = _polygons.length; i < len; ++i)
                 if (_polygons[i].containsPoint(localPoint)) return this;
 
-            return null;
+            return super.hitTest(localPoint);
         }
 
         /** Draws a circle. */
